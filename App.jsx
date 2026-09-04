@@ -7,6 +7,8 @@ function App() {
   const [texts, setTexts] = useState([]);
   const [newText, setNewText] = useState('');
 
+  const [draggingId, setDraggingId] = useState(null);
+
   const builtInImages = [
     {
       name: 'Lion',
@@ -43,6 +45,8 @@ function App() {
     const textLayer = {
       id: Date.now(),
       text: newText,
+      x: 20,
+      y: 20,
     };
 
     setTexts([...texts, textLayer]);
@@ -51,6 +55,39 @@ function App() {
 
   const deleteText = (id) => {
     setTexts(texts.filter((text) => text.id !== id));
+  };
+
+  const handleMouseDown = (event, id) => {
+    event.preventDefault();
+    setDraggingId(id);
+  };
+
+  const handleMouseMove = (event) => {
+    if (draggingId === null) {
+      return;
+    }
+
+    const container = event.currentTarget;
+    const rect = container.getBoundingClientRect();
+
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    setTexts((currentTexts) =>
+      currentTexts.map((text) =>
+        text.id === draggingId
+          ? {
+              ...text,
+              x,
+              y,
+            }
+          : text
+      )
+    );
+  };
+
+  const handleMouseUp = () => {
+    setDraggingId(null);
   };
 
   return (
@@ -100,7 +137,12 @@ function App() {
             </button>
           </div>
 
-          <div className="image-container">
+          <div
+            className="image-container"
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          >
             <img
               src={selectedImage}
               alt="Selected"
@@ -111,11 +153,19 @@ function App() {
               <div
                 key={text.id}
                 className="text-layer"
+                style={{
+                  left: `${text.x}px`,
+                  top: `${text.y}px`,
+                }}
+                onMouseDown={(event) =>
+                  handleMouseDown(event, text.id)
+                }
               >
                 {text.text}
 
                 <button
                   className="delete-text"
+                  onMouseDown={(event) => event.stopPropagation()}
                   onClick={() => deleteText(text.id)}
                 >
                   ×
