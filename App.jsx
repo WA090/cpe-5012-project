@@ -8,7 +8,8 @@ function App() {
   const [newText, setNewText] = useState('');
   const [draggingId, setDraggingId] = useState(null);
   const [selectedTextId, setSelectedTextId] = useState(null);
-
+  const [stickers, setStickers] = useState([]);
+  const [draggingStickerId, setDraggingStickerId] = useState(null);
   const builtInImages = [
     {
       name: 'Lion',
@@ -23,7 +24,8 @@ function App() {
       url: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=80',
     },
   ];
-
+  const stickersList = ['😀', '😂', '😎', '🔥', '❤️', '👍', '💀', '🎉'];
+ 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
 
@@ -79,7 +81,54 @@ function App() {
       )
     );
   };
+const addSticker = (emoji) => {
+  const sticker = {
+    id: Date.now(),
+    emoji,
+    x: 100,
+    y: 100,
+  };
 
+  setStickers([...stickers, sticker]);
+};
+
+const deleteSticker = (id) => {
+  setStickers(stickers.filter((sticker) => sticker.id !== id));
+};
+
+const handleStickerMouseDown = (event, id) => {
+  event.preventDefault();
+  event.stopPropagation();
+  setDraggingStickerId(id);
+};
+
+const handleStickerMouseMove = (event) => {
+  if (draggingStickerId === null) {
+    return;
+  }
+
+  const container = event.currentTarget;
+  const rect = container.getBoundingClientRect();
+
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+
+  setStickers((currentStickers) =>
+    currentStickers.map((sticker) =>
+      sticker.id === draggingStickerId
+        ? {
+            ...sticker,
+            x,
+            y,
+          }
+        : sticker
+    )
+  );
+};
+
+const handleStickerMouseUp = () => {
+  setDraggingStickerId(null);
+};
   const handleMouseDown = (event, id) => {
     event.preventDefault();
     setDraggingId(id);
@@ -163,6 +212,20 @@ function App() {
             <button onClick={addText}>
               Add Text
             </button>
+            <div className="sticker-controls">
+             <h2>Emoji / Sticker</h2>
+
+              <div className="sticker-list">
+               {stickersList.map((emoji) => (
+                <button
+                  key={emoji}
+                  onClick={() => addSticker(emoji)}
+                > 
+                 {emoji}
+                </button>
+               ))}
+              </div>
+            </div>
           </div>
 
           {selectedText && (
@@ -261,10 +324,20 @@ function App() {
 
           <div
             className="image-container"
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
+            onMouseMove={(event) => {
+              handleMouseMove(event);
+              handleStickerMouseMove(event);
+            }}
+            onMouseUp={() => {
+              handleMouseUp();
+              handleStickerMouseUp();
+            }}
+            onMouseLeave={() => {
+              handleMouseUp();
+              handleStickerMouseUp();
+            }}
           >
+            
             <img
               src={selectedImage}
               alt="Selected"
@@ -309,6 +382,33 @@ function App() {
                 </button>
               </div>
             ))}
+
+            {stickers.map((sticker) => (
+              <div
+                key={sticker.id}
+                className="sticker-layer"
+                style={{
+                  left: `${sticker.x}px`,
+                  top: `${sticker.y}px`,
+                  position: 'absolute',
+                }}
+                onMouseDown={(event) => 
+                  handleStickerMouseDown(event, sticker.id)
+                }
+              >
+                {sticker.emoji}
+                <button
+                  className="delete-sticker"
+                  onMouseDown={(event) => 
+                    event.stopPropagation()
+                  }
+                  onClick={() => deleteSticker(sticker.id)}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+
           </div>
         </>
       )}

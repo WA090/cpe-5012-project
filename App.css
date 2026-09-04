@@ -90,3 +90,33 @@
   height: auto;
   display: block;
 }
+.sticker-controls {
+  margin-top: 15px;
+}
+
+.sticker-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.sticker-list button {
+  font-size: 28px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.sticker-layer {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: 50px;
+  cursor: move;
+  user-select: none;
+}
+
+.delete-sticker {
+  font-size: 14px;
+  margin-left: 5px;
+  cursor: pointer;
+}
