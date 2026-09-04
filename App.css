@@ -1,3 +1,50 @@
+.style-controls {
+  margin: 20px auto;
+  padding: 15px;
+  max-width: 600px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.style-controls h2 {
+  margin-top: 0;
+}
+
+.style-controls label {
+  margin: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.style-controls select,
+.style-controls input[type="number"] {
+  padding: 6px;
+}
+
+.style-controls input[type="range"] {
+  width: 120px;
+}
+
+.text-layer {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 8px 12px;
+  font-weight: bold;
+  cursor: move;
+  user-select: none;
+  transform: translate(-50%, -50%);
+}
+
+.selected-text {
+  outline: 2px dashed #333;
+}
+
+.delete-text {
+  margin-left: 10px;
+  cursor: pointer;
+}
 .text-controls {
   margin-bottom: 30px;
 }

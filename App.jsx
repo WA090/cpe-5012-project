@@ -6,8 +6,8 @@ function App() {
 
   const [texts, setTexts] = useState([]);
   const [newText, setNewText] = useState('');
-
   const [draggingId, setDraggingId] = useState(null);
+  const [selectedTextId, setSelectedTextId] = useState(null);
 
   const builtInImages = [
     {
@@ -47,6 +47,12 @@ function App() {
       text: newText,
       x: 20,
       y: 20,
+      font: 'Arial',
+      size: 24,
+      color: '#ffffff',
+      align: 'left',
+      opacity: 1,
+      outline: false,
     };
 
     setTexts([...texts, textLayer]);
@@ -55,11 +61,29 @@ function App() {
 
   const deleteText = (id) => {
     setTexts(texts.filter((text) => text.id !== id));
+
+    if (selectedTextId === id) {
+      setSelectedTextId(null);
+    }
+  };
+
+  const updateTextStyle = (property, value) => {
+    setTexts((currentTexts) =>
+      currentTexts.map((text) =>
+        text.id === selectedTextId
+          ? {
+              ...text,
+              [property]: value,
+            }
+          : text
+      )
+    );
   };
 
   const handleMouseDown = (event, id) => {
     event.preventDefault();
     setDraggingId(id);
+    setSelectedTextId(id);
   };
 
   const handleMouseMove = (event) => {
@@ -89,6 +113,10 @@ function App() {
   const handleMouseUp = () => {
     setDraggingId(null);
   };
+
+  const selectedText = texts.find(
+    (text) => text.id === selectedTextId
+  );
 
   return (
     <div className="App">
@@ -137,6 +165,100 @@ function App() {
             </button>
           </div>
 
+          {selectedText && (
+            <div className="style-controls">
+              <h2>Text Styling</h2>
+
+              <label>
+                Font:
+                <select
+                  value={selectedText.font}
+                  onChange={(e) =>
+                    updateTextStyle('font', e.target.value)
+                  }
+                >
+                  <option value="Arial">Arial</option>
+                  <option value="Georgia">Georgia</option>
+                  <option value="Verdana">Verdana</option>
+                  <option value="Courier New">Courier New</option>
+                  <option value="Impact">Impact</option>
+                </select>
+              </label>
+
+              <label>
+                Size:
+                <input
+                  type="number"
+                  min="10"
+                  max="100"
+                  value={selectedText.size}
+                  onChange={(e) =>
+                    updateTextStyle(
+                      'size',
+                      Number(e.target.value)
+                    )
+                  }
+                />
+              </label>
+
+              <label>
+                Color:
+                <input
+                  type="color"
+                  value={selectedText.color}
+                  onChange={(e) =>
+                    updateTextStyle('color', e.target.value)
+                  }
+                />
+              </label>
+
+              <label>
+                Alignment:
+                <select
+                  value={selectedText.align}
+                  onChange={(e) =>
+                    updateTextStyle('align', e.target.value)
+                  }
+                >
+                  <option value="left">Left</option>
+                  <option value="center">Center</option>
+                  <option value="right">Right</option>
+                </select>
+              </label>
+
+              <label>
+                Opacity:
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value={selectedText.opacity}
+                  onChange={(e) =>
+                    updateTextStyle(
+                      'opacity',
+                      Number(e.target.value)
+                    )
+                  }
+                />
+              </label>
+
+              <label>
+                Outline:
+                <input
+                  type="checkbox"
+                  checked={selectedText.outline}
+                  onChange={(e) =>
+                    updateTextStyle(
+                      'outline',
+                      e.target.checked
+                    )
+                  }
+                />
+              </label>
+            </div>
+          )}
+
           <div
             className="image-container"
             onMouseMove={handleMouseMove}
@@ -152,10 +274,23 @@ function App() {
             {texts.map((text) => (
               <div
                 key={text.id}
-                className="text-layer"
+                className={`text-layer ${
+                  selectedTextId === text.id
+                    ? 'selected-text'
+                    : ''
+                }`}
                 style={{
                   left: `${text.x}px`,
                   top: `${text.y}px`,
+                  fontFamily: text.font,
+                  fontSize: `${text.size}px`,
+                  color: text.color,
+                  textAlign: text.align,
+                  width: '200px',
+                  opacity: text.opacity,
+                  WebkitTextStroke: text.outline
+                    ? '1px black'
+                    : 'none',
                 }}
                 onMouseDown={(event) =>
                   handleMouseDown(event, text.id)
@@ -165,7 +300,9 @@ function App() {
 
                 <button
                   className="delete-text"
-                  onMouseDown={(event) => event.stopPropagation()}
+                  onMouseDown={(event) =>
+                    event.stopPropagation()
+                  }
                   onClick={() => deleteText(text.id)}
                 >
                   ×
