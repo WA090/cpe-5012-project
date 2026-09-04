@@ -1,58 +1,44 @@
-.App {
-  text-align: center;
-  padding: 30px;
-  font-family: Arial, sans-serif;
-}
-
-h1 {
+.text-controls {
   margin-bottom: 30px;
 }
 
-.image-controls {
-  margin-bottom: 30px;
+.text-controls input {
+  padding: 10px;
+  width: 250px;
+  margin-right: 10px;
+  font-size: 16px;
 }
 
-.upload-button {
-  display: inline-block;
+.text-controls button {
   padding: 10px 20px;
-  background-color: #333;
+  cursor: pointer;
+}
+
+.text-layer {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: rgba(0, 0, 0, 0.6);
   color: white;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-bottom: 20px;
+  padding: 8px 12px;
+  font-size: 24px;
+  font-weight: bold;
 }
 
-.upload-button input {
-  display: none;
-}
-
-.built-in-images {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.built-in-images button {
-  padding: 10px 20px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background-color: white;
+.delete-text {
+  margin-left: 10px;
   cursor: pointer;
 }
-
-.built-in-images button:hover {
-  background-color: #eee;
-}
-
 .image-container {
   position: relative;
   display: inline-block;
-  max-width: 800px;
+  width: 600px;
+  max-width: 90%;
+  margin-top: 20px;
 }
 
 .watermarked-image {
-  max-width: 100%;
+  width: 100%;
   height: auto;
   display: block;
 }

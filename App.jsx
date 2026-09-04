@@ -4,6 +4,9 @@ import './App.css';
 function App() {
   const [selectedImage, setSelectedImage] = useState('');
 
+  const [texts, setTexts] = useState([]);
+  const [newText, setNewText] = useState('');
+
   const builtInImages = [
     {
       name: 'Lion',
@@ -30,6 +33,24 @@ function App() {
 
   const handleBuiltInImage = (imageUrl) => {
     setSelectedImage(imageUrl);
+  };
+
+  const addText = () => {
+    if (newText.trim() === '') {
+      return;
+    }
+
+    const textLayer = {
+      id: Date.now(),
+      text: newText,
+    };
+
+    setTexts([...texts, textLayer]);
+    setNewText('');
+  };
+
+  const deleteText = (id) => {
+    setTexts(texts.filter((text) => text.id !== id));
   };
 
   return (
@@ -63,13 +84,46 @@ function App() {
       </div>
 
       {selectedImage && (
-        <div className="image-container">
-          <img
-            src={selectedImage}
-            alt="Selected"
-            className="watermarked-image"
-          />
-        </div>
+        <>
+          <div className="text-controls">
+            <h2>Add Text</h2>
+
+            <input
+              type="text"
+              value={newText}
+              onChange={(e) => setNewText(e.target.value)}
+              placeholder="Enter your text"
+            />
+
+            <button onClick={addText}>
+              Add Text
+            </button>
+          </div>
+
+          <div className="image-container">
+            <img
+              src={selectedImage}
+              alt="Selected"
+              className="watermarked-image"
+            />
+
+            {texts.map((text) => (
+              <div
+                key={text.id}
+                className="text-layer"
+              >
+                {text.text}
+
+                <button
+                  className="delete-text"
+                  onClick={() => deleteText(text.id)}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
